@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt'
+import { hash } from "src/utils/hashFunctions";
 import { BeforeInsert, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'users' })
@@ -21,7 +21,6 @@ export class User {
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await hash(this.password);
   }
 }
