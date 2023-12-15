@@ -1,29 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { CreateUserParams } from './types';
+import { CreateUserParams } from './utils/types';
+import { CreateBloodTestParams } from './utils/types';
+import { BloodTest } from './entities/blood-test.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(BloodTest) private bloodTestRepository: Repository<BloodTest>) {}
 
   async create(userDetails: CreateUserParams): Promise<void> {
     const newUser = this.userRepository.create(userDetails);
     await this.userRepository.save(newUser);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return await this.userRepository.findOneBy({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async createBloodTest(userId: number, bloodTestParams: CreateBloodTestParams): Promise<void> {
+    console.log(userId);
+    const user = await this.findOne(userId);
+    console.log(user);
+    const newBloodTest = this.bloodTestRepository.create(bloodTestParams);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    newBloodTest.user = user;
+    await this.bloodTestRepository.save(newBloodTest);
   }
 }

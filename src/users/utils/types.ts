@@ -3,3 +3,7 @@ export type CreateUserParams = {
   email: string;
   password: string;
 }
+
+export type CreateBloodTestParams = {
+  filename: string;
+}

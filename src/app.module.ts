@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { BloodTest } from './users/entities/blood-test.entity';
 
 @Module({
   imports: [UsersModule, 
@@ -11,7 +12,7 @@ import { User } from './users/entities/user.entity';
       port: 3306,
       username: 'health_tracker_user',
       database: 'health_tracker_db',
-      entities: [User],
+      entities: [User, BloodTest],
       synchronize: true,
     })
   ],
