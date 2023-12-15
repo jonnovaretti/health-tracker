@@ -11,6 +11,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     await this.usersService.create(createUserDto);
+
   }
 
   @Get(':id')
