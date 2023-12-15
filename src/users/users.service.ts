@@ -22,9 +22,7 @@ export class UsersService {
   }
 
   async createBloodTest(userId: number, bloodTestParams: CreateBloodTestParams): Promise<void> {
-    console.log(userId);
     const user = await this.findOne(userId);
-    console.log(user);
     const newBloodTest = this.bloodTestRepository.create(bloodTestParams);
 
     newBloodTest.user = user;
