@@ -1,6 +1,5 @@
-import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
-import { CognitoUserAttribute, CognitoUserPool, ISignUpResult } from "amazon-cognito-identity-js";
-import { CreateUserParams } from "../utils/types";
+import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
+import { CreateUserParams, ConfirmUserParams } from "../utils/types";
 
 export class AuthUsersService {
   private userPool: CognitoUserPool;
@@ -13,9 +12,10 @@ export class AuthUsersService {
   }
 
   async registerUser(createUserParams: CreateUserParams): Promise<string>{
+    let externalUserId: string;
     const { name, email, password } = createUserParams;
 
-    const authCreated = await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       this.userPool.signUp(email, password,
         [new CognitoUserAttribute({ Name: 'name', Value: name})],
         null,
@@ -24,22 +24,33 @@ export class AuthUsersService {
             reject(err);
           }
           else {
+            externalUserId = result.userSub;
             resolve(result);
           }
         });
     });
 
-    return (authCreated as ISignUpResult).userSub;
+    return externalUserId; 
   }
 
- // async confirmUser(confirmUserParams: ConfirmUserParams) {
- //   const client = new CognitoIdentityProviderClient();
- //   const input = {
- //     ClientId: process.env.AWS_COGNITO_USER_POOL_ID,
- //     Username: confirmUserParams.userName,
- //     ConfirmationCode: confirmUserParams.confirmationCode,
- //   };
+  async confirmUser(confirmUserParams: ConfirmUserParams) {
+    const userData = {
+      Username: confirmUserParams.email,
+      Pool: this.userPool
+    };
 
- //   return client.send(input);
- // }
+    const cognitoUser = new CognitoUser(userData);
+
+    await new Promise((resolve, reject) => { 
+      cognitoUser.confirmRegistration(confirmUserParams.code, true,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          }
+          else {
+            resolve(result);
+          }
+        });
+    });
+  }
 }

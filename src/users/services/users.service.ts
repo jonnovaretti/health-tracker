@@ -29,12 +29,12 @@ export class UsersService {
     });
   }
 
-  async findOne(id: number) {
+  async findById(id: number) {
     return await this.userRepository.findOneBy({ id });
   }
 
   async createBloodTest(userId: number, bloodTestParams: CreateBloodTestParams): Promise<void> {
-    const user = await this.findOne(userId);
+    const user = await this.findById(userId);
     const newBloodTest = this.bloodTestRepository.create(bloodTestParams);
 
     newBloodTest.user = user;
