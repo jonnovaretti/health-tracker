@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, Matches } from "class-validator";
 import { Match } from "src/utils/match.decorator";
 
 export class CreateUserDto {
@@ -10,7 +10,10 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  password: string;
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,}$/,
+    { message: 'invalid password' },
+  ) password: string;
 
   @IsNotEmpty()
   @Match<CreateUserDto>('password')

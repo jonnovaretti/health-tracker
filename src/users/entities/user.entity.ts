@@ -1,10 +1,12 @@
-import { hash } from "src/utils/hashFunctions";
-import { BeforeInsert, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: true })
+  externalId: string;
 
   @Column()
   name: string;
@@ -13,14 +15,6 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ type: "varchar", length: 2000, unique: true })
-  password: string;
-
   @CreateDateColumn()
   createdAt: Date;
-
-  @BeforeInsert()
-  async hashPassword(): Promise<void> {
-    this.password = await hash(this.password);
-  }
 }

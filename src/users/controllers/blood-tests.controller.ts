@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe } from '@nestjs/common';
-import { UsersService } from "../users.service";
+import { UsersService } from '../services/users.service';
 import { CreateBloodTestDto } from '../dto/create-blood-test.dto';
 
 @Controller('users/:id/blood-tests')
