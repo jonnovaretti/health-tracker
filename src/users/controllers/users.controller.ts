@@ -3,6 +3,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service'; 
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { AuthUsersService } from '../services/auth-users.service';
+import { LoginUserDto } from '../dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -20,6 +21,12 @@ export class UsersController {
   @UsePipes(new ValidationPipe())
   async confirmUser(@Body() confirmUserDto: ConfirmUserDto) {
     await this.authService.confirmUser(confirmUserDto); 
+  }
+
+  @Post('login')
+  @UsePipes(new ValidationPipe())
+  async login(@Body() loginUserDto: LoginUserDto) {
+    return await this.authService.authenticate(loginUserDto);
   }
 
   @Get(':id')

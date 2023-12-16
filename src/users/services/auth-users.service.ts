@@ -1,5 +1,6 @@
-import { CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
-import { CreateUserParams, ConfirmUserParams } from "../utils/types";
+import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
+import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
+import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "../utils/types";
 
 export class AuthUsersService {
   private userPool: CognitoUserPool;
@@ -31,6 +32,38 @@ export class AuthUsersService {
     });
 
     return externalUserId; 
+  }
+
+  async authenticate(loginParams: LoginParams): Promise<AuthenticationResult> {
+    let authenticationToken: AuthenticationTokenDto;
+    const userData = {
+      Username: loginParams.email,
+      Pool: this.userPool
+    };
+
+    const authenticationData = new AuthenticationDetails({
+      Username: loginParams.email,
+      Password: loginParams.password
+    });
+
+    const userCognito = new CognitoUser(userData);
+
+    authenticationToken = await new Promise((resolve, reject) => {
+      userCognito.authenticateUser(authenticationData,
+        {
+          onSuccess: (result) => {
+            resolve({
+              accessToken: result.getAccessToken().getJwtToken(),
+              refreshToken: result.getRefreshToken().getToken()
+            });
+          },
+          onFailure: (err) => {
+            reject(err);
+          }
+        });
+    });
+
+    return authenticationToken;
   }
 
   async confirmUser(confirmUserParams: ConfirmUserParams) {

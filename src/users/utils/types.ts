@@ -12,3 +12,13 @@ export type ConfirmUserParams = {
   email: string;
   code: string;
 }
+
+export type LoginParams = {
+  email: string;
+  password: string;
+}
+
+export type AuthenticationResult = {
+  accessToken: string;
+  refreshToken: string;
+}
