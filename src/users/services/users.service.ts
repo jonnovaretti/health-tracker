@@ -5,12 +5,12 @@ import { User } from '../entities/user.entity';
 import { CreateUserParams } from '../utils/types';
 import { CreateBloodTestParams } from '../utils/types';
 import { BloodTest } from '../entities/blood-test.entity'; 
-import { AuthUsersService } from './auth-users.service';
+import { AuthService } from './auth-users.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private authUsersService: AuthUsersService,
+    private authService: AuthService,
     private datasource: DataSource,
     @InjectRepository(BloodTest) private bloodTestRepository: Repository<BloodTest>,
     @InjectRepository(User) private userRepository: Repository<User>) {}
@@ -24,7 +24,7 @@ export class UsersService {
     }
 
     await this.datasource.transaction(async (manager) => {
-      const externalId = await this.authUsersService.registerUser(userDetails);
+      const externalId = await this.authService.registerUser(userDetails);
       await manager.update(User, userCreated.id, { externalId });
     });
   }

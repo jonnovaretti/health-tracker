@@ -2,7 +2,7 @@ import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
 import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
 import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "../utils/types";
 
-export class AuthUsersService {
+export class AuthService {
   private userPool: CognitoUserPool;
 
   constructor() {
@@ -12,7 +12,7 @@ export class AuthUsersService {
     });
   }
 
-  async registerUser(createUserParams: CreateUserParams): Promise<string>{
+  async registerUser(createUserParams: CreateUserParams): Promise<string> {
     let externalUserId: string;
     const { name, email, password } = createUserParams;
 

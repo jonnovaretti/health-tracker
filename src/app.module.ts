@@ -4,9 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { BloodTest } from './users/entities/blood-test.entity';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [UsersModule, 
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: '.development.env',
       isGlobal: true
@@ -19,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
       database: 'health_tracker_db',
       entities: [User, BloodTest],
       synchronize: true,
-    })
+    }),
   ],
   controllers: [],
   providers: [],

@@ -2,13 +2,13 @@ import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, ParseIntP
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service'; 
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
-import { AuthUsersService } from '../services/auth-users.service';
+import { AuthService } from '../services/auth-users.service';
 import { LoginUserDto } from '../dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly authService: AuthUsersService,
+    private readonly authService: AuthService,
     private readonly usersService: UsersService) {}
 
   @Post()
