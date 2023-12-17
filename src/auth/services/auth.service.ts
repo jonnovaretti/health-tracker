@@ -1,6 +1,6 @@
 import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
 import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
-import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "../utils/types";
+import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "src/users/utils/types";
 
 export class AuthService {
   private userPool: CognitoUserPool;

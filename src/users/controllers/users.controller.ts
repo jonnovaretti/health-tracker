@@ -1,8 +1,8 @@
+import { AuthService } from 'src/auth/services/auth.service';
 import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service'; 
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
-import { AuthService } from '../services/auth-users.service';
 import { LoginUserDto } from '../dto/login-user.dto';
 
 @Controller('users')

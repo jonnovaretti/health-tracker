@@ -1,3 +1,4 @@
+import { AuthService } from 'src/auth/services/auth.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -5,7 +6,6 @@ import { User } from '../entities/user.entity';
 import { CreateUserParams } from '../utils/types';
 import { CreateBloodTestParams } from '../utils/types';
 import { BloodTest } from '../entities/blood-test.entity'; 
-import { AuthService } from './auth-users.service';
 
 @Injectable()
 export class UsersService {
