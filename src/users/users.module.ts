@@ -6,10 +6,11 @@ import { UsersService } from './services/users.service';
 import { UsersController } from './controllers/users.controller';
 import { BloodTest } from './entities/blood-test.entity';
 import { BloodTestsController } from './controllers/blood-tests.controller';
+import { TokenValidatorService } from 'src/auth/services/token-validator.service';
 
 @Module({
   imports: [ TypeOrmModule.forFeature([User, BloodTest]) ],
   controllers: [UsersController, BloodTestsController],
-  providers: [UsersService, AuthService],
+  providers: [UsersService, AuthService, TokenValidatorService],
 })
 export class UsersModule {}

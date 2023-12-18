@@ -6,6 +6,7 @@ import { User } from '../entities/user.entity';
 import { CreateUserParams } from '../utils/types';
 import { CreateBloodTestParams } from '../utils/types';
 import { BloodTest } from '../entities/blood-test.entity'; 
+import { FindUserDto } from '../dto/find-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +30,7 @@ export class UsersService {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<FindUserDto> {
     return await this.userRepository.findOneBy({ id });
   }
 

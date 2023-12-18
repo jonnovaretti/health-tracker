@@ -1,9 +1,10 @@
 import { AuthService } from 'src/auth/services/auth.service';
-import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service'; 
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
+import { AuthorizerGuard } from 'src/auth/guards/cognito-authorizer.guard';
 
 @Controller('users')
 export class UsersController {
@@ -30,7 +31,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @UseGuards(AuthorizerGuard)
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findById(+id);
   }
 }
