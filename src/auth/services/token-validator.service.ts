@@ -28,31 +28,36 @@ export class TokenValidatorService {
       axios.get(authServerUrl, { headers: { 'Content-Type': 'application/json' } })
         .then(response => {
           const body = response.data;
-          let pems = {};
-          const keys = body['keys'];
           
-          const jw = new JwtService();
-          const decodeJw = jw.decode(token, {complete: true});
-          if (!decodeJw) reject(new Error('Token is invalid'));
+          const jwtService = new JwtService();
+          const jwtDecoded = jwtService.decode(token, {complete: true});
 
-          keys.forEach(key => {
-            const keyId = key.kid;
-            const modulus = key.n;
-            const exponent = key.e;
-            const keyType = key.kty;
-            const jwk = { kty: keyType, n: modulus, e: exponent };
-            const pem = jwtToPem(jwk);
-            pems[keyId] = pem;
-          });
+          if (!jwtDecoded) reject(new Error('Token is invalid'));
 
-          const kid = decodeJw['header'].kid;
-          const pem = pems[kid];
+          const keys = body['keys'];
+          const pem = this.buildPem(keys, jwtDecoded['header'].kid);
 
           if (!pem) reject(new Error('Token is invalid'));
 
-          jw.verify(token, { publicKey: pem });
+          jwtService.verify(token, { publicKey: pem });
           resolve(pem);
         });
     });
+  }
+
+  private buildPem(keys: any, kid: string): any {
+    let pems = {};
+
+    keys.forEach(key => {
+      const keyId = key.kid;
+      const modulus = key.n;
+      const exponent = key.e;
+      const keyType = key.kty;
+      const jwk = { kty: keyType, n: modulus, e: exponent };
+      const pem = jwtToPem(jwk);
+      pems[keyId] = pem;
+    });
+
+    return pems[kid];
   }
 }
