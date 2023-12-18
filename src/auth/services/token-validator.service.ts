@@ -1,6 +1,4 @@
 import axios from 'axios';
-import * as jwtToPem from 'jwk-to-pem';
-import jwt from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt'; 
 import { UnauthorizedException } from '@nestjs/common';
 
@@ -18,7 +16,8 @@ export class TokenValidatorService {
 
     try {
       await this.validateAccessToken(tokenArray[1], authServerUrl);
-    } catch (e) {
+    } 
+    catch (e) {
       throw new UnauthorizedException(e.message)
     }
   }
@@ -28,16 +27,19 @@ export class TokenValidatorService {
       axios.get(authServerUrl, { headers: { 'Content-Type': 'application/json' } })
         .then(response => {
           const body = response.data;
-          
           const jwtService = new JwtService();
+
           const jwtDecoded = jwtService.decode(token, {complete: true});
+          if (!jwtDecoded) {
+            reject(new Error('Token is invalid'));
+            return;
+          }
 
-          if (!jwtDecoded) reject(new Error('Token is invalid'));
-
-          const keys = body['keys'];
-          const pem = this.buildPem(keys, jwtDecoded['header'].kid);
-
-          if (!pem) reject(new Error('Token is invalid'));
+          const pem = this.buildPem(body['keys'], jwtDecoded['header'].kid);
+          if (!pem) {
+            reject(new Error('Token is invalid'));
+            return;
+          }
 
           jwtService.verify(token, { publicKey: pem });
           resolve(pem);
@@ -46,6 +48,7 @@ export class TokenValidatorService {
   }
 
   private buildPem(keys: any, kid: string): any {
+    const jwtToPem = require('jwk-to-pem');
     let pems = {};
 
     keys.forEach(key => {
