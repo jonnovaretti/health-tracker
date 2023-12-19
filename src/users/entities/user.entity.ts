@@ -5,6 +5,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index({ unique: true })
   @Column({ nullable: true })
   externalId: string;
 

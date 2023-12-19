@@ -8,19 +8,26 @@ export class AuthorizerGuard implements CanActivate {
   constructor(private readonly tokenValidatorService: TokenValidatorService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>(); 
-    const authorization = request.headers['authorization'];
-    let authorizationString = '';
+    try {
+      const request = context.switchToHttp().getRequest(); 
+      const authorization = request.headers['authorization'];
+      let authorizationString = '';
 
-    if(Array.isArray(authorization)) {
-      authorizationString = authorization[0];
+      if(Array.isArray(authorization)) {
+        authorizationString = authorization[0];
+      }
+      else {
+        authorizationString = authorization;
+      }
+
+      this.tokenValidatorService.checkUserRequest(authorizationString, request.params['userId']);
+      await this.tokenValidatorService.authorize(authorizationString, this.COGNITO_WELL_KNOW_URL); 
+
+      return true;
     }
-    else {
-      authorizationString = authorization;
+    catch (e) {
+      console.log(e);
+      return false;
     }
-
-    await this.tokenValidatorService.authorize(authorizationString, this.COGNITO_WELL_KNOW_URL); 
-
-    return true;
   }  
 }

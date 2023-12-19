@@ -8,32 +8,34 @@ export class TokenValidatorService {
       throw new UnauthorizedException(`Authorization header is required`);
     }
 
-    const tokenArray = authenticationHeader.split(' ', 2);
-    
-    if (!tokenArray[0] || tokenArray[0].toLowerCase() !== 'bearer') {
-      throw new UnauthorizedException('Token type must be Bearer');
-    }
+    const token = this.extractToken(authenticationHeader);
 
     try {
-      await this.validateAccessToken(tokenArray[1], authServerUrl);
+      await this.validateAccessToken(token, authServerUrl);
     } 
     catch (e) {
       throw new UnauthorizedException(e.message)
     }
   }
 
-  async validateAccessToken(token: string, authServerUrl: string) {
+  checkUserRequest(authenticationHeader: string, userId: string) {
+    const token = this.extractToken(authenticationHeader);
+    const jwtDecoded = this.extractJwt(token);
+    const sub = jwtDecoded['payload'].sub;
+
+    console.log(userId);
+    console.log(sub);
+    if(userId != sub) throw new UnauthorizedException('User is not authorized');
+  }
+
+  private async validateAccessToken(token: string, authServerUrl: string) {
+    const jwtService = new JwtService();
+    const jwtDecoded = this.extractJwt(token);
+
     return new Promise((resolve, reject) => {
       axios.get(authServerUrl, { headers: { 'Content-Type': 'application/json' } })
         .then(response => {
           const body = response.data;
-          const jwtService = new JwtService();
-
-          const jwtDecoded = jwtService.decode(token, {complete: true});
-          if (!jwtDecoded) {
-            reject(new Error('Token is invalid'));
-            return;
-          }
 
           const pem = this.buildPem(body['keys'], jwtDecoded['header'].kid);
           if (!pem) {
@@ -45,6 +47,15 @@ export class TokenValidatorService {
           resolve(pem);
         });
     });
+  }
+
+  private extractJwt(token: string) {
+    const jwtService = new JwtService();
+    const jwtDecoded = jwtService.decode(token, {complete: true});
+
+    if(!jwtDecoded) throw new UnauthorizedException('Token format is invalid');
+
+    return jwtDecoded;
   }
 
   private buildPem(keys: any, kid: string): any {
@@ -62,5 +73,15 @@ export class TokenValidatorService {
     });
 
     return pems[kid];
+  }
+
+  private extractToken(authenticationHeader) {
+    const tokenArray = authenticationHeader.split(' ', 2);
+    
+    if (!tokenArray[0] || tokenArray[0].toLowerCase() !== 'bearer') {
+      throw new UnauthorizedException('Token type must be Bearer');
+    }
+
+    return tokenArray[1];
   }
 }

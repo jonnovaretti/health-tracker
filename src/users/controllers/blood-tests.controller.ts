@@ -2,13 +2,13 @@ import { Controller, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe }
 import { UsersService } from '../services/users.service';
 import { CreateBloodTestDto } from '../dto/create-blood-test.dto';
 
-@Controller('users/:id/blood-tests')
+@Controller('users/:userId/blood-tests')
 export class BloodTestsController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
-  async create(@Param('id', ParseIntPipe) id: number, @Body() createBloodTestDto: CreateBloodTestDto) {
-    await this.usersService.createBloodTest(id, createBloodTestDto);
+  async create(@Param('userId') userId: string, @Body() createBloodTestDto: CreateBloodTestDto) {
+    await this.usersService.createBloodTest(userId, createBloodTestDto);
   }
 }

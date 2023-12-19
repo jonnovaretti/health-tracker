@@ -30,9 +30,9 @@ export class UsersController {
     return await this.authService.authenticate(loginUserDto);
   }
 
-  @Get(':id')
+  @Get(':userId')
   @UseGuards(AuthorizerGuard)
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findById(+id);
+  async findOne(@Param('userId') userId: string) {
+    return this.usersService.findByExternalId(userId);
   }
 }

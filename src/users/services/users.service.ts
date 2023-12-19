@@ -30,12 +30,12 @@ export class UsersService {
     });
   }
 
-  async findById(id: number): Promise<FindUserDto> {
-    return await this.userRepository.findOneBy({ id });
+  async findByExternalId(externalId: string): Promise<FindUserDto> {
+    return await this.userRepository.findOneBy({ externalId });
   }
 
-  async createBloodTest(userId: number, bloodTestParams: CreateBloodTestParams): Promise<void> {
-    const user = await this.findById(userId);
+  async createBloodTest(externalId: string, bloodTestParams: CreateBloodTestParams): Promise<void> {
+    const user = await this.findByExternalId(externalId);
     const newBloodTest = this.bloodTestRepository.create(bloodTestParams);
 
     newBloodTest.user = user;
