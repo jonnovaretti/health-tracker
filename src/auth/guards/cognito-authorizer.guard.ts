@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
 import { TokenValidatorService } from "../services/token-validator.service";
 
 @Injectable()
@@ -26,8 +26,7 @@ export class AuthorizerGuard implements CanActivate {
       return true;
     }
     catch (e) {
-      console.log(e);
-      return false;
-    }
+      throw new UnauthorizedException();
+   }
   }  
 }
