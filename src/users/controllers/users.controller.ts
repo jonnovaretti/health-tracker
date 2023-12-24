@@ -5,6 +5,7 @@ import { UsersService } from '../services/users.service';
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizerGuard } from 'src/auth/guards/cognito-authorizer.guard';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
@@ -15,7 +16,19 @@ export class UsersController {
   @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
-    await this.usersService.create(createUserDto);
+    try {
+      await this.usersService.create(createUserDto);
+    }
+    catch (error) {
+      if (error.code === "UsernameExistsException") {
+        throw new HttpException({
+          status: HttpStatus.BAD_REQUEST,
+          message: 'There is an account using this e-mail',
+        }, HttpStatus.BAD_REQUEST, {
+            cause: error
+          });
+      }
+    }
   }
 
   @Post('confirm')

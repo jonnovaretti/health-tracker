@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, ValidationPipe, UsePipes, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Param, ValidationPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateBloodTestDto } from '../dto/create-blood-test.dto';
 import { AuthorizerGuard } from 'src/auth/guards/cognito-authorizer.guard';
