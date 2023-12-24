@@ -1,4 +1,4 @@
-import { AuthService } from 'src/auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';

@@ -1,10 +1,10 @@
-import { AuthService } from 'src/auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service'
 import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service'; 
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
-import { AuthorizerGuard } from 'src/auth/guards/cognito-authorizer.guard';
+import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Controller('users')
@@ -40,7 +40,19 @@ export class UsersController {
   @Post('login')
   @UsePipes(new ValidationPipe())
   async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.authService.authenticate(loginUserDto);
+    try {
+      return await this.authService.authenticate(loginUserDto);
+    }
+    catch (error) {
+      if (error.code == "NotAuthorizedException") {
+        throw new HttpException({
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'E-mail or password are invalid',
+        }, HttpStatus.UNAUTHORIZED, {
+            cause: error
+          });
+      }
+    }
   }
 
   @Get(':userId')

@@ -9,7 +9,7 @@ import { BloodTestsController } from './controllers/blood-tests.controller';
 import { TokenValidatorService } from 'src/auth/services/token-validator.service';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([User, BloodTest]) ],
+  imports: [TypeOrmModule.forFeature([User, BloodTest])],
   controllers: [UsersController, BloodTestsController],
   providers: [UsersService, AuthService, TokenValidatorService],
 })
