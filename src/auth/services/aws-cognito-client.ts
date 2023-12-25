@@ -1,8 +1,15 @@
-import { AuthenticationTokenDto } from "../auth/dto/authentication-token.dto";
-import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool, CognitoUserSession } from "amazon-cognito-identity-js";
-import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "../users/utils/types";
+import {
+  AuthenticationDetails,
+  CognitoUser,
+  CognitoUserAttribute,
+  CognitoUserPool,
+  CognitoUserSession
+} from "amazon-cognito-identity-js";
+import { AuthenticationResult } from "./types";
+import { Injectable } from "@nestjs/common";
 
-export class CognitoClass {
+@Injectable()
+export class AwsCognitoClient {
   private userPool: CognitoUserPool;
 
   constructor() {
@@ -10,9 +17,12 @@ export class CognitoClass {
       UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
       ClientId: process.env.AWS_COGNITO_CLIENT_ID,
     });
+
+    console.log(this.userPool);
   }
 
-  async registerUser(name: string, email: string, password: string): Promise<string> {
+  async createUser(name: string, email: string, password: string): Promise<string> {
+    console.log('create user');
     let userSub: string;
 
     await new Promise((resolve, reject) => {
@@ -64,16 +74,16 @@ export class CognitoClass {
     };
   }
 
-  async confirmUser(confirmUserParams: ConfirmUserParams) {
+  async confirmUser(email: string, code: string) {
     const userData = {
-      Username: confirmUserParams.email,
+      Username: email,
       Pool: this.userPool
     };
 
     const cognitoUser = new CognitoUser(userData);
 
     await new Promise((resolve, reject) => { 
-      cognitoUser.confirmRegistration(confirmUserParams.code, true,
+      cognitoUser.confirmRegistration(code, true,
         (err, result) => {
           if (err) {
             reject(err);

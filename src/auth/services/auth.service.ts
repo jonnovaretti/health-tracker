@@ -1,89 +1,33 @@
 import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
-import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js";
-import { AuthenticationResult, CreateUserParams, ConfirmUserParams, LoginParams } from "src/users/utils/types";
+import { CreateUserParams, ConfirmUserParams, LoginParams } from "../../users/utils/types";
+import { AuthenticationResult } from "./types";
+import { AwsCognitoClient } from "./aws-cognito-client";
 
 export class AuthService {
-  private userPool: CognitoUserPool;
-
-  constructor() {
-    this.userPool = new CognitoUserPool({
-      UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
-      ClientId: process.env.AWS_COGNITO_CLIENT_ID,
-    });
+  constructor(private awsCognitoClient: AwsCognitoClient) {
+    console.log(awsCognitoClient);
   }
 
   async registerUser(createUserParams: CreateUserParams): Promise<string> {
-    let externalUserId: string;
     const { name, email, password } = createUserParams;
-
-    await new Promise((resolve, reject) => {
-      this.userPool.signUp(email, password,
-        [new CognitoUserAttribute({ Name: 'name', Value: name})],
-        null,
-        (err, result) => {
-          if (!result) {
-            reject(err);
-          }
-          else {
-            externalUserId = result.userSub;
-            resolve(result);
-          }
-        });
-    });
-
-    return externalUserId; 
+    return await this.awsCognitoClient.createUser(name, email, password);
   }
 
   async authenticate(loginParams: LoginParams): Promise<AuthenticationResult> {
     let authenticationToken: AuthenticationTokenDto;
-    const userData = {
-      Username: loginParams.email,
-      Pool: this.userPool
-    };
-
-    const authenticationData = new AuthenticationDetails({
-      Username: loginParams.email,
-      Password: loginParams.password
-    });
-
-    const userCognito = new CognitoUser(userData);
-
-    authenticationToken = await new Promise((resolve, reject) => {
-      userCognito.authenticateUser(authenticationData,
-        {
-          onSuccess: (result) => {
-            resolve({
-              accessToken: result.getAccessToken().getJwtToken(),
-              refreshToken: result.getRefreshToken().getToken()
-            });
-          },
-          onFailure: (err) => {
-            reject(err);
-          }
-        });
-    });
+    
+    authenticationToken = await this.awsCognitoClient.authenticate(
+      loginParams.email,
+      loginParams.password
+    )
 
     return authenticationToken;
   }
 
   async confirmUser(confirmUserParams: ConfirmUserParams) {
-    const userData = {
-      Username: confirmUserParams.email,
-      Pool: this.userPool
-    };
-
-    const cognitoUser = new CognitoUser(userData);
-
-    await new Promise((resolve, reject) => { 
-      cognitoUser.confirmRegistration(confirmUserParams.code, true,
-        (err, result) => {
-          if (err) {
-            reject(err);
-          }
-          else {
-            resolve(result);
-          }
-        });
-    });
+    await this.awsCognitoClient.confirmUser(
+      confirmUserParams.email,
+      confirmUserParams.code
+    )
   }
 }
