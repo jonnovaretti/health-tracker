@@ -30,7 +30,7 @@ export class UsersController {
       } else {
         throw new HttpException({
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'There is an account using this e-mail',
+          message: 'An internal error has happened, please try again',
         }, HttpStatus.INTERNAL_SERVER_ERROR, {
             cause: error
           });
