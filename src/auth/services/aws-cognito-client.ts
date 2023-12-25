@@ -17,12 +17,9 @@ export class AwsCognitoClient {
       UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
       ClientId: process.env.AWS_COGNITO_CLIENT_ID,
     });
-
-    console.log(this.userPool);
   }
 
   async createUser(name: string, email: string, password: string): Promise<string> {
-    console.log('create user');
     let userSub: string;
 
     await new Promise((resolve, reject) => {

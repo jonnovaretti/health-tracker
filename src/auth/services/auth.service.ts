@@ -2,11 +2,11 @@ import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
 import { CreateUserParams, ConfirmUserParams, LoginParams } from "../../users/utils/types";
 import { AuthenticationResult } from "./types";
 import { AwsCognitoClient } from "./aws-cognito-client";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class AuthService {
-  constructor(private awsCognitoClient: AwsCognitoClient) {
-    console.log(awsCognitoClient);
-  }
+  constructor(private awsCognitoClient: AwsCognitoClient) {}
 
   async registerUser(createUserParams: CreateUserParams): Promise<string> {
     const { name, email, password } = createUserParams;

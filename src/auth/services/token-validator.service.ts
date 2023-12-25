@@ -23,8 +23,6 @@ export class TokenValidatorService {
     const jwtDecoded = this.extractJwt(token);
     const sub = jwtDecoded['payload'].sub;
 
-    console.log(userId);
-    console.log(sub);
     if(userId != sub) throw new UnauthorizedException('User is not authorized');
   }
 
