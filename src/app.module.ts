@@ -19,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
       host: process.env.MY_SQL_HOST,
       port: +process.env.MY_SQL_PORT,
       username: process.env.MY_SQL_USERNAME,
+      password: process.env.PASSWORD,
       database: process.env.MY_SQL_DATABASE,
       entities: [User, BloodTest],
       synchronize: true,
