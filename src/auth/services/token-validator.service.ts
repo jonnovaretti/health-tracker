@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { JwtService } from '@nestjs/jwt'; 
+import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 
 export class TokenValidatorService {
@@ -12,9 +12,8 @@ export class TokenValidatorService {
 
     try {
       await this.validateAccessToken(token, authServerUrl);
-    } 
-    catch (e) {
-      throw new UnauthorizedException(e.message)
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
     }
   }
 
@@ -23,7 +22,8 @@ export class TokenValidatorService {
     const jwtDecoded = this.extractJwt(token);
     const sub = jwtDecoded['payload'].sub;
 
-    if(userId != sub) throw new UnauthorizedException('User is not authorized');
+    if (userId != sub)
+      throw new UnauthorizedException('User is not authorized');
   }
 
   private async validateAccessToken(token: string, authServerUrl: string) {
@@ -31,8 +31,9 @@ export class TokenValidatorService {
     const jwtDecoded = this.extractJwt(token);
 
     return new Promise((resolve, reject) => {
-      axios.get(authServerUrl, { headers: { 'Content-Type': 'application/json' } })
-        .then(response => {
+      axios
+        .get(authServerUrl, { headers: { 'Content-Type': 'application/json' } })
+        .then((response) => {
           const body = response.data;
 
           const pem = this.buildPem(body['keys'], jwtDecoded['header'].kid);
@@ -49,9 +50,9 @@ export class TokenValidatorService {
 
   private extractJwt(token: string) {
     const jwtService = new JwtService();
-    const jwtDecoded = jwtService.decode(token, {complete: true});
+    const jwtDecoded = jwtService.decode(token, { complete: true });
 
-    if(!jwtDecoded) throw new UnauthorizedException('Token format is invalid');
+    if (!jwtDecoded) throw new UnauthorizedException('Token format is invalid');
 
     return jwtDecoded;
   }
@@ -60,7 +61,7 @@ export class TokenValidatorService {
     const jwtToPem = require('jwk-to-pem');
     let pems = {};
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const keyId = key.kid;
       const modulus = key.n;
       const exponent = key.e;
@@ -75,7 +76,7 @@ export class TokenValidatorService {
 
   private extractToken(authenticationHeader) {
     const tokenArray = authenticationHeader.split(' ', 2);
-    
+
     if (!tokenArray[0] || tokenArray[0].toLowerCase() !== 'bearer') {
       throw new UnauthorizedException('Token type must be Bearer');
     }

@@ -8,11 +8,11 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    UsersModule, 
+    UsersModule,
     AuthModule,
     ConfigModule.forRoot({
       envFilePath: '.development.env',
-      isGlobal: true
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

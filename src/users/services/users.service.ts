@@ -5,7 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { CreateUserParams } from '../utils/types';
 import { CreateBloodTestParams } from '../utils/types';
-import { BloodTest } from '../entities/blood-test.entity'; 
+import { BloodTest } from '../entities/blood-test.entity';
 import { FindUserDto } from '../dto/find-user.dto';
 
 @Injectable()
@@ -13,14 +13,21 @@ export class UsersService {
   constructor(
     private authService: AuthService,
     private datasource: DataSource,
-    @InjectRepository(BloodTest) private bloodTestRepository: Repository<BloodTest>,
-    @InjectRepository(User) private userRepository: Repository<User>) {}
+    @InjectRepository(BloodTest)
+    private bloodTestRepository: Repository<BloodTest>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
   async create(userDetails: CreateUserParams): Promise<void> {
-    let userCreated = await this.userRepository.findOneBy({ email: userDetails.email });
+    let userCreated = await this.userRepository.findOneBy({
+      email: userDetails.email,
+    });
 
     if (!userCreated) {
-      const user = this.userRepository.create({ email: userDetails.email, name: userDetails.name });
+      const user = this.userRepository.create({
+        email: userDetails.email,
+        name: userDetails.name,
+      });
       userCreated = await this.userRepository.save(user);
     }
 
@@ -34,7 +41,10 @@ export class UsersService {
     return await this.userRepository.findOneBy({ externalId });
   }
 
-  async createBloodTest(externalId: string, bloodTestParams: CreateBloodTestParams): Promise<void> {
+  async createBloodTest(
+    externalId: string,
+    bloodTestParams: CreateBloodTestParams,
+  ): Promise<void> {
     const user = await this.findByExternalId(externalId);
     const newBloodTest = this.bloodTestRepository.create(bloodTestParams);
 

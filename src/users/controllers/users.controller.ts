@@ -1,7 +1,16 @@
-import { AuthService } from '../../auth/services/auth.service'
-import { Controller, Get, Post, Body, Param, ValidationPipe, UsePipes, UseGuards } from '@nestjs/common';
+import { AuthService } from '../../auth/services/auth.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  ValidationPipe,
+  UsePipes,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UsersService } from '../services/users.service'; 
+import { UsersService } from '../services/users.service';
 import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
@@ -11,29 +20,37 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export class UsersController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService) {}
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       await this.usersService.create(createUserDto);
-    }
-    catch (error) {
-      if (error.code === "UsernameExistsException") {
-        throw new HttpException({
-          status: HttpStatus.BAD_REQUEST,
-          message: 'There is an account using this e-mail',
-        }, HttpStatus.BAD_REQUEST, {
-            cause: error
-          });
+    } catch (error) {
+      if (error.code === 'UsernameExistsException') {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            message: 'There is an account using this e-mail',
+          },
+          HttpStatus.BAD_REQUEST,
+          {
+            cause: error,
+          },
+        );
       } else {
-        throw new HttpException({
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'An internal error has happened, please try again',
-        }, HttpStatus.INTERNAL_SERVER_ERROR, {
-            cause: error
-          });
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: 'An internal error has happened, please try again',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          {
+            cause: error,
+          },
+        );
       }
     }
   }
@@ -41,7 +58,7 @@ export class UsersController {
   @Post('confirm')
   @UsePipes(new ValidationPipe())
   async confirmUser(@Body() confirmUserDto: ConfirmUserDto) {
-    await this.authService.confirmUser(confirmUserDto); 
+    await this.authService.confirmUser(confirmUserDto);
   }
 
   @Post('login')
@@ -49,15 +66,18 @@ export class UsersController {
   async login(@Body() loginUserDto: LoginUserDto) {
     try {
       return await this.authService.authenticate(loginUserDto);
-    }
-    catch (error) {
-      if (error.code == "NotAuthorizedException") {
-        throw new HttpException({
-          status: HttpStatus.UNAUTHORIZED,
-          message: 'E-mail or password are invalid',
-        }, HttpStatus.UNAUTHORIZED, {
-            cause: error
-          });
+    } catch (error) {
+      if (error.code == 'NotAuthorizedException') {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'E-mail or password are invalid',
+          },
+          HttpStatus.UNAUTHORIZED,
+          {
+            cause: error,
+          },
+        );
       }
     }
   }

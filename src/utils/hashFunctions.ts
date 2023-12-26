@@ -6,5 +6,5 @@ export async function hash(rawString: string) {
 }
 
 export async function compareHashes(rawString: string, hashedString: string) {
-  return await bcrypt.compare(rawString, hashedString);  
+  return await bcrypt.compare(rawString, hashedString);
 }

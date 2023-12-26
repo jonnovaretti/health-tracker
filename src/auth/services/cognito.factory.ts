@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { CognitoUserPool } from "amazon-cognito-identity-js";
+import { Injectable } from '@nestjs/common';
+import { CognitoUserPool } from 'amazon-cognito-identity-js';
 
 @Injectable()
 export class CognitoFactory {
@@ -7,8 +7,8 @@ export class CognitoFactory {
 
   createUserPool(userPoolId: string, clientId: string): CognitoUserPool {
     return new CognitoUserPool({
-      UserPoolId: userPoolId, 
-      ClientId: clientId, 
+      UserPoolId: userPoolId,
+      ClientId: clientId,
     });
   }
 }

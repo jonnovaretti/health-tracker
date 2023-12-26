@@ -1,5 +1,13 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './user.entity';
 
 @Entity({ name: 'blood_tests' })
 export class BloodTest {
@@ -15,5 +23,5 @@ export class BloodTest {
   filename: string;
 
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 }

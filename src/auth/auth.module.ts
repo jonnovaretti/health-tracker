@@ -5,6 +5,6 @@ import { AwsCognitoClient } from './services/aws-cognito-client';
 
 @Module({
   exports: [AuthService],
-  providers: [AuthService, TokenValidatorService, AwsCognitoClient]
+  providers: [AuthService, TokenValidatorService, AwsCognitoClient],
 })
 export class AuthModule {}

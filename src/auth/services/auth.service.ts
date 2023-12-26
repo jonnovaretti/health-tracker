@@ -1,8 +1,12 @@
-import { AuthenticationTokenDto } from "../dto/authentication-token.dto";
-import { CreateUserParams, ConfirmUserParams, LoginParams } from "../../users/utils/types";
-import { AuthenticationResult } from "./types";
-import { AwsCognitoClient } from "./aws-cognito-client";
-import { Injectable } from "@nestjs/common";
+import { AuthenticationTokenDto } from '../dto/authentication-token.dto';
+import {
+  CreateUserParams,
+  ConfirmUserParams,
+  LoginParams,
+} from '../../users/utils/types';
+import { AuthenticationResult } from './types';
+import { AwsCognitoClient } from './aws-cognito-client';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +19,11 @@ export class AuthService {
 
   async authenticate(loginParams: LoginParams): Promise<AuthenticationResult> {
     let authenticationToken: AuthenticationTokenDto;
-    
+
     authenticationToken = await this.awsCognitoClient.authenticate(
       loginParams.email,
-      loginParams.password
-    )
+      loginParams.password,
+    );
 
     return authenticationToken;
   }
@@ -27,7 +31,7 @@ export class AuthService {
   async confirmUser(confirmUserParams: ConfirmUserParams) {
     await this.awsCognitoClient.confirmUser(
       confirmUserParams.email,
-      confirmUserParams.code
-    )
+      confirmUserParams.code,
+    );
   }
 }

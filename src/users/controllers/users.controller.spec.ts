@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '../../auth/services/auth.service'
+import { AuthService } from '../../auth/services/auth.service';
 import { UsersController } from './users.controller';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -15,19 +15,19 @@ describe('UsersController', () => {
     provide: UsersService,
     useFactory: () => ({
       create: jest.fn(() => {}),
-    })
+    }),
   };
 
   const AuthServiceProvider = {
     provide: AuthService,
     useFactory: () => ({
       registerUser: jest.fn(() => {}),
-    })
+    }),
   };
-  
+
   const TokenValidatorServiceProvider = {
     provide: TokenValidatorService,
-    useFactory: () => ({})
+    useFactory: () => ({}),
   };
 
   beforeEach(async () => {
@@ -39,7 +39,8 @@ describe('UsersController', () => {
         AuthService,
         AuthServiceProvider,
         TokenValidatorService,
-        TokenValidatorServiceProvider],
+        TokenValidatorServiceProvider,
+      ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -57,13 +58,21 @@ describe('UsersController', () => {
     });
 
     it('returns Bad Request when the user exists', async () => {
-      let serviceMock = jest.spyOn(service, 'create').mockRejectedValue({ code: 'UsernameExistsException' });
-      await expect(controller.create(new CreateUserDto)).rejects.toThrow(HttpException);
+      let serviceMock = jest
+        .spyOn(service, 'create')
+        .mockRejectedValue({ code: 'UsernameExistsException' });
+      await expect(controller.create(new CreateUserDto())).rejects.toThrow(
+        HttpException,
+      );
     });
 
     it('returns Internal Server Error when any error happens', async () => {
-      let serviceMock = jest.spyOn(service, 'create').mockRejectedValue({ code: 'AnyException' });
-      await expect(controller.create(new CreateUserDto)).rejects.toThrow(HttpException);
+      let serviceMock = jest
+        .spyOn(service, 'create')
+        .mockRejectedValue({ code: 'AnyException' });
+      await expect(controller.create(new CreateUserDto())).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 });

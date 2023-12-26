@@ -7,7 +7,8 @@ import {
   registerDecorator,
 } from 'class-validator';
 
-export const Match = <T>(property: keyof T, options?: ValidationOptions) =>
+export const Match =
+  <T>(property: keyof T, options?: ValidationOptions) =>
   (object: any, propertyName: string) =>
     registerDecorator({
       target: object.constructor,
