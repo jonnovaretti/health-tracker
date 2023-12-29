@@ -26,7 +26,7 @@ export class AwsCognitoClient {
   ): Promise<string> {
     let userSub: string;
 
-    await new Promise((resolve, reject) => {
+    userSub = await new Promise<string>((resolve, reject) => {
       this.userPool.signUp(
         email,
         password,
@@ -36,8 +36,7 @@ export class AwsCognitoClient {
           if (!result) {
             reject(err);
           } else {
-            userSub = result.userSub;
-            resolve(result);
+            resolve(result.userSub);
           }
         },
       );

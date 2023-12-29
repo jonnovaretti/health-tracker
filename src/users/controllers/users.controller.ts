@@ -15,6 +15,7 @@ import { ConfirmUserDto } from '../dto/confirm-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
 
 @Controller('users')
 export class UsersController {
@@ -29,27 +30,15 @@ export class UsersController {
     try {
       await this.usersService.create(createUserDto);
     } catch (error) {
-      if (error.code === 'UsernameExistsException') {
+      if (error instanceof UsernameExistsException) {
         throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            message: 'There is an account using this e-mail',
-          },
+          'There is an account using this e-mail',
           HttpStatus.BAD_REQUEST,
-          {
-            cause: error,
-          },
         );
       } else {
         throw new HttpException(
-          {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: 'An internal error has happened, please try again',
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          {
-            cause: error,
-          },
+          'An internal error has happened, please try again',
+          HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     }
