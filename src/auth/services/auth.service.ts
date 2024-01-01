@@ -18,14 +18,14 @@ export class AuthService {
   }
 
   async authenticate(loginParams: LoginParams): Promise<AuthenticationResult> {
-    let authenticationToken: AuthenticationTokenDto;
+    let authenticationResponse: AuthenticationTokenDto;
 
-    authenticationToken = await this.awsCognitoClient.authenticate(
+    authenticationResponse = await this.awsCognitoClient.authenticate(
       loginParams.email,
       loginParams.password,
     );
 
-    return authenticationToken;
+    return authenticationResponse;
   }
 
   async confirmUser(confirmUserParams: ConfirmUserParams) {

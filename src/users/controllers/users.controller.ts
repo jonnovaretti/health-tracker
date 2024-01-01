@@ -8,6 +8,7 @@ import {
   ValidationPipe,
   UsePipes,
   UseGuards,
+  Response,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service';
@@ -16,6 +17,7 @@ import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
+import { addAccessTokenToCookies, addRefreshTokenToCookies } from '../utils/cookies';
 
 @Controller('users')
 export class UsersController {
@@ -52,9 +54,14 @@ export class UsersController {
 
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() loginUserDto: LoginUserDto) {
+  async login(@Body() loginUserDto: LoginUserDto, @Response() response) {
     try {
-      return await this.authService.authenticate(loginUserDto);
+      const authenticationReponse = await this.authService.authenticate(loginUserDto);
+
+      addAccessTokenToCookies(response, authenticationReponse.accessToken);
+      addRefreshTokenToCookies(response, authenticationReponse.refreshToken);
+
+      return authenticationReponse;
     } catch (error) {
       if (error.code == 'NotAuthorizedException') {
         throw new HttpException(
