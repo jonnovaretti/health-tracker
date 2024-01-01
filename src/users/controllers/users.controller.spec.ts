@@ -58,18 +58,14 @@ describe('UsersController', () => {
     });
 
     it('returns Bad Request when the user exists', async () => {
-      let serviceMock = jest
-        .spyOn(service, 'create')
-        .mockRejectedValue({ code: 'UsernameExistsException' });
+      jest.spyOn(service, 'create').mockRejectedValue(UsernameExistsException);
       await expect(controller.create(new CreateUserDto())).rejects.toThrow(
         HttpException,
       );
     });
 
     it('returns Internal Server Error when any error happens', async () => {
-      let serviceMock = jest
-        .spyOn(service, 'create')
-        .mockRejectedValue({ code: 'AnyException' });
+      jest.spyOn(service, 'create').mockRejectedValue({ code: 'AnyException' });
       await expect(controller.create(new CreateUserDto())).rejects.toThrow(
         HttpException,
       );

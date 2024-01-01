@@ -24,10 +24,10 @@ export class AwsCognitoClient {
     email: string,
     password: string,
   ): Promise<string> {
-    let userSub: string;
-
-    userSub = await new Promise<string>((resolve, reject) => {
-      this.userPool.signUp(email, password,
+    const userSub: string = await new Promise<string>((resolve, reject) => {
+      this.userPool.signUp(
+        email,
+        password,
         [new CognitoUserAttribute({ Name: 'name', Value: name })],
         null,
         (err, result) => {

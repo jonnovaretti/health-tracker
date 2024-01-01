@@ -1,6 +1,6 @@
 function addCookie(res: any, name: string, value: string, expiresAt: Date) {
   res.cookie(name, value, {
-    expires: expiresAt, 
+    expires: expiresAt,
     sameSite: 'strict',
     httpOnly: true,
   });

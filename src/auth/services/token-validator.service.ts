@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwtToPem from 'jwk-to-pem';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 
@@ -58,8 +59,7 @@ export class TokenValidatorService {
   }
 
   private buildPem(keys: any, kid: string): any {
-    const jwtToPem = require('jwk-to-pem');
-    let pems = {};
+    const pems = {};
 
     keys.forEach((key) => {
       const keyId = key.kid;

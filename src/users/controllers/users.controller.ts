@@ -17,7 +17,10 @@ import { LoginUserDto } from '../dto/login-user.dto';
 import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
-import { addAccessTokenToCookies, addRefreshTokenToCookies } from '../utils/cookies';
+import {
+  addAccessTokenToCookies,
+  addRefreshTokenToCookies,
+} from '../utils/cookies';
 
 @Controller('users')
 export class UsersController {
@@ -40,7 +43,7 @@ export class UsersController {
       } else {
         throw new HttpException(
           'An internal error has happened, please try again',
-          HttpStatus.INTERNAL_SERVER_ERROR
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
     }
@@ -56,7 +59,8 @@ export class UsersController {
   @UsePipes(new ValidationPipe())
   async login(@Body() loginUserDto: LoginUserDto, @Response() response) {
     try {
-      const authenticationReponse = await this.authService.authenticate(loginUserDto);
+      const authenticationReponse =
+        await this.authService.authenticate(loginUserDto);
 
       addAccessTokenToCookies(response, authenticationReponse.accessToken);
       addRefreshTokenToCookies(response, authenticationReponse.refreshToken);
