@@ -8,7 +8,7 @@ import {
   ValidationPipe,
   UsePipes,
   UseGuards,
-  Response,
+  Res,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../services/users.service';
@@ -21,6 +21,7 @@ import {
   addAccessTokenToCookies,
   addRefreshTokenToCookies,
 } from '../utils/cookies';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -57,7 +58,7 @@ export class UsersController {
 
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() loginUserDto: LoginUserDto, @Response() response) {
+  async login(@Body() loginUserDto: LoginUserDto, @Res() response: Response) {
     try {
       const authenticationReponse =
         await this.authService.authenticate(loginUserDto);
@@ -65,7 +66,7 @@ export class UsersController {
       addAccessTokenToCookies(response, authenticationReponse.accessToken);
       addRefreshTokenToCookies(response, authenticationReponse.refreshToken);
 
-      return authenticationReponse;
+      response.send(authenticationReponse)
     } catch (error) {
       if (error.code == 'NotAuthorizedException') {
         throw new HttpException(
