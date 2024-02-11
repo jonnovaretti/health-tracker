@@ -79,6 +79,17 @@ export class UsersController {
             cause: error,
           },
         );
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            message: error.message,
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          {
+            cause: error,
+          },
+        );
       }
     }
   }
