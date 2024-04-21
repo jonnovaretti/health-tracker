@@ -1,34 +1,34 @@
-import { AuthService } from '../../auth/services/auth.service';
+import { UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
+  HttpException, HttpStatus,
   Param,
-  ValidationPipe,
-  UsePipes,
-  UseGuards,
+  Post,
   Res,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UsersService } from '../services/users.service';
-import { ConfirmUserDto } from '../dto/confirm-user.dto';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { Response } from 'express';
 import { AuthorizerGuard } from '../../auth/guards/cognito-authorizer.guard';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { UsernameExistsException } from '@aws-sdk/client-cognito-identity-provider';
+import { AuthService } from '../../auth/services/auth.service';
+import { ConfirmUserDto } from '../dto/confirm-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { LoginUserDto } from '../dto/login-user.dto';
+import { UsersService } from '../services/users.service';
 import {
   addAccessTokenToCookies,
   addRefreshTokenToCookies,
 } from '../utils/cookies';
-import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   @Post()
   @UsePipes(new ValidationPipe())
